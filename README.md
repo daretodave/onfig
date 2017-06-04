@@ -122,19 +122,22 @@ Onfig.configure({
 ```
 
 Available keys for configure are -
-- environment
+
+**environment**
  - A string value or a function that returns a string value. This will determine
  the **ENV** property when loading configuration files from disk.
   - This is defaulted to; ```() => process.env.NODE_ENV```. This loads the NODE_ENV
   property from the node process.
-- precedence
+  
+**precedence**
  - A string array or a function that returns a string array. This will determine
  what files get loaded and in which order they get loaded in. The **%ENV%**
  string will be replaced with the environment above during load.
  - This is defaulted to; ```["base", "%ENV%"]```. This means search for a
  file suffixed with **.base.json** then merge this with the file **%ENV%.json**
  which in determined by the environment configuration above
-- root
+
+**root**
  - A string value or a function that returns a string value. This will determine
  the root directory to search for configuration in.
  - This is defaulted to; ```./config```. Meaning search for configuration in
@@ -230,4 +233,4 @@ Yes **d.ts** files come packed with the project!
 ## Contribution
 Forks and pull requests are open to any one.
 
-This is a simple initiative but I'm game for any improvements. 
+This is a simple initiative but I'm game for any improvements.
