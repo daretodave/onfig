@@ -21,43 +21,43 @@ export default class Onfig {
     public static get(config: OnfigResolution<string>): OnfigProvider {
         const key = OnfigResolution.resolve(config);
 
-        return this.configurations.get(key);
+        return Onfig.configurations.get(key);
     }
 
     public static provide(config: string, configuration: OnfigResolution<any>) {
-        this.configurations[config] = new OnfigProvider(configuration);
+        Onfig.configurations[config] = new OnfigProvider(configuration);
 
         return this;
     }
 
     public static env(environment: OnfigResolution<string>) {
-        this.config.environment = environment;
+        Onfig.config.environment = environment;
 
         return this;
     }
 
     public static configure(config: OnfigConfig) {
         if (config === null) {
-            return this;
+            return Onfig;
         }
 
         if (config.hasOwnProperty("environment")) {
-            this.config.environment = config.environment;
+            Onfig.config.environment = config.environment;
         }
         if (config.hasOwnProperty("precedence")) {
-            this.config.precedence = config.precedence;
+            Onfig.config.precedence = config.precedence;
         }
         if (config.hasOwnProperty("root")) {
-            this.config.root = config.root;
+            Onfig.config.root = config.root;
         }
 
-        return this;
+        return Onfig;
     }
 
     private static extract(location: string): Promise<object> {
         return new Promise(
             (resolve: (config: object) => any, reject: (reason: any) => any) => {
-                fs.access(path, fs.F_OK, err => {
+                fs.access(location, fs.F_OK, err => {
                     if (err) {
                         resolve({});
                         return;
@@ -86,8 +86,8 @@ export default class Onfig {
         return new Promise(
             (resolve: (provider: OnfigProvider) => any, reject: (reason: any) => any) => {
                 Promise.all([
-                    this.extract(location),
-                    this.extract(path.join(location, '../', key, path.basename(location)))
+                    Onfig.extract(location),
+                    Onfig.extract(path.join(location, '../', key, path.basename(location)))
                 ]).then((approaches: object[]) => resolve(Object.assign({}, ...approaches)))
                     .catch(error => reject(error));
             }
@@ -99,9 +99,9 @@ export default class Onfig {
             (resolve: (provider: OnfigProvider) => any, reject: (reason: any) => any) => {
 
                 const main: string = require.main.filename;
-                const root: string = OnfigResolution.resolve(this.config.root) || "./config";
-                const environment: string = OnfigResolution.resolve(this.config.environment) || process.env.NODE_ENV;
-                const precedence: string[] = OnfigResolution.resolve(this.config.precedence) || ["base", "%ENV%"];
+                const root: string = OnfigResolution.resolve(Onfig.config.root) || "./config";
+                const environment: string = OnfigResolution.resolve(Onfig.config.environment) || process.env.NODE_ENV || "development";
+                const precedence: string[] = OnfigResolution.resolve(Onfig.config.precedence) || ["base", "%ENV%"];
 
                 const locations = precedence.map(suffix => {
                     suffix = suffix.replace(/%ENV%/g, environment);
@@ -112,12 +112,12 @@ export default class Onfig {
                 });
 
                 Promise
-                    .all(locations.map(location => this.resolve(key, location)))
+                    .all(locations.map(location => Onfig.resolve(key, location)))
                     .then((configurations: object[]) => {
                         const configuration = Object.assign({}, ...configurations);
                         const provider = new OnfigProvider(configuration);
 
-                        this.configurations.set(key, provider);
+                        Onfig.configurations.set(key, provider);
 
                         resolve(provider);
                     })
@@ -127,9 +127,14 @@ export default class Onfig {
         );
     }
 
-    public static load(...key: string[]): Promise<OnfigProvider[]> {
-        return Promise.all<OnfigProvider>(key.map(Onfig._load));
+    public static load(...key: string[]): Promise<OnfigProvider[]|OnfigProvider> {
+        if (key.length === 0) {
+           return Promise.reject("No key provided");
+        }
+
+        return key.length === 1 ? Onfig._load(key[0]) : Promise.all<OnfigProvider>(key.map(Onfig._load));
     }
+
 
 }
 

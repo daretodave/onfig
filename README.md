@@ -128,7 +128,8 @@ Available keys for configure are -
  the **ENV** property when loading configuration files from disk.
   - This is defaulted to; ```() => process.env.NODE_ENV```. This loads the NODE_ENV
   property from the node process.
-  
+  - If process.env.NODE_ENV is not found, this defaults to "development" as a fail-safe.
+
 **precedence**
  - A string array or a function that returns a string array. This will determine
  what files get loaded and in which order they get loaded in. The **%ENV%**

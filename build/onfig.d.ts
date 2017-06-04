@@ -12,6 +12,6 @@ export default class Onfig {
     private static extract(location);
     private static resolve(key, location);
     private static _load(key);
-    static load(...key: string[]): Promise<OnfigProvider[]>;
+    static load(...key: string[]): Promise<OnfigProvider[] | OnfigProvider>;
 }
 export { Onfig, OnfigProvider, OnfigResolution, OnfigResolver, OnfigConfig };
