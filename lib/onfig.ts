@@ -1,6 +1,7 @@
 import {OnfigConfig} from "./onfig-config";
 import {OnfigProvider} from "./onfig-provider";
 import {OnfigResolution} from "./onfig-resolution";
+import {OnfigResolver} from "./onfig-resolver";
 
 const path = require("path");
 const fs = require("fs");
@@ -29,7 +30,7 @@ export default class Onfig {
         return this;
     }
 
-    public static setEnv(environment: OnfigResolution<string>) {
+    public static env(environment: OnfigResolution<string>) {
         this.config.environment = environment;
 
         return this;
@@ -81,6 +82,18 @@ export default class Onfig {
         );
     }
 
+    private static resolve(key: string, location: string): Promise<OnfigProvider> {
+        return new Promise(
+            (resolve: (provider: OnfigProvider) => any, reject: (reason: any) => any) => {
+                Promise.all([
+                    this.extract(location),
+                    this.extract(path.join(location, '../', key, path.basename(location)))
+                ]).then((approaches: object[]) => resolve(Object.assign({}, ...approaches)))
+                    .catch(error => reject(error));
+            }
+        );
+    }
+
     private static _load(key: string): Promise<OnfigProvider> {
         return new Promise(
             (resolve: (provider: OnfigProvider) => any, reject: (reason: any) => any) => {
@@ -99,7 +112,7 @@ export default class Onfig {
                 });
 
                 Promise
-                    .all(locations.map(location => this.extract(location)))
+                    .all(locations.map(location => this.resolve(key, location)))
                     .then((configurations: object[]) => {
                         const configuration = Object.assign({}, ...configurations);
                         const provider = new OnfigProvider(configuration);
@@ -119,3 +132,5 @@ export default class Onfig {
     }
 
 }
+
+export {Onfig, OnfigProvider, OnfigResolution, OnfigResolver, OnfigConfig};

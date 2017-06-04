@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const onfig_provider_1 = require("./onfig-provider");
+exports.OnfigProvider = onfig_provider_1.OnfigProvider;
 const onfig_resolution_1 = require("./onfig-resolution");
+exports.OnfigResolution = onfig_resolution_1.OnfigResolution;
 const path = require("path");
 const fs = require("fs");
 class Onfig {
@@ -13,7 +15,7 @@ class Onfig {
         this.configurations[config] = new onfig_provider_1.OnfigProvider(configuration);
         return this;
     }
-    static setEnv(environment) {
+    static env(environment) {
         this.config.environment = environment;
         return this;
     }
@@ -55,6 +57,15 @@ class Onfig {
             });
         });
     }
+    static resolve(key, location) {
+        return new Promise((resolve, reject) => {
+            Promise.all([
+                this.extract(location),
+                this.extract(path.join(location, '../', key, path.basename(location)))
+            ]).then((approaches) => resolve(Object.assign({}, ...approaches)))
+                .catch(error => reject(error));
+        });
+    }
     static _load(key) {
         return new Promise((resolve, reject) => {
             const main = require.main.filename;
@@ -67,7 +78,7 @@ class Onfig {
                 return path.join(main, '../', root, name);
             });
             Promise
-                .all(locations.map(location => this.extract(location)))
+                .all(locations.map(location => this.resolve(key, location)))
                 .then((configurations) => {
                 const configuration = Object.assign({}, ...configurations);
                 const provider = new onfig_provider_1.OnfigProvider(configuration);
@@ -88,4 +99,5 @@ Onfig.config = {
     environment: () => process.env.NODE_ENV
 };
 exports.default = Onfig;
+exports.Onfig = Onfig;
 //# sourceMappingURL=onfig.js.map

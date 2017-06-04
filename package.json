@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Manage JSON configuration across environments in NodeJS",
   "main": "build/onfig.js",
+  "types": "build/onfig.d.ts",
   "scripts": {
     "test": "jest"
   },
