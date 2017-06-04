@@ -1,6 +1,6 @@
 {
   "name": "onfig",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Manage JSON configuration across environments in NodeJS",
   "main": "build/onfig.js",
   "types": "build/onfig.d.ts",

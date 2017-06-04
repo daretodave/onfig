@@ -22,7 +22,8 @@ way onfig works is by using a base configuration then overriding it
 with environment specific configuration.
 
 By default onfig will use the **NODE_ENV** environment variable to decide
-what is the desired configuration. This can be easily be set programmatically
+what is the desired configuration. This defaults to "development" when not found
+as a fail-safe. Additionally, the onfig environment value can easily be set programmatically
 as you'll see in the example below.
 
 Consider the following project
