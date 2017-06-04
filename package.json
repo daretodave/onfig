@@ -1,0 +1,27 @@
+{
+  "name": "onfig",
+  "version": "0.0.1",
+  "description": "Manage JSON configuration across environments in NodeJS",
+  "main": "build/onfig.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daretodave/onfig.git"
+  },
+  "keywords": [
+    "JSON",
+    "configuration",
+    "config"
+  ],
+  "author": "David Rehmat",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daretodave/onfig/issues"
+  },
+  "homepage": "https://github.com/daretodave/onfig#readme",
+  "devDependencies": {
+    "@types/node": "^7.0.27"
+  }
+}
